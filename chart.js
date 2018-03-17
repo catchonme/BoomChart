@@ -38,14 +38,14 @@ var chart = (function () {
     canvasContext.textAlign = "center";
     canvasContext.globalAlpha = 0.6;
     canvasContext.fillText(options.title, canvas.width / 2, elmProp.paddingTop / 2);
-    canvasContext.strokeStyle = "black";
-    canvasContext.globalAlpha = 0.6;
-    canvasContext.lineWidth = 2;
     // 画Y/X轴两条主线
     canvasContext.beginPath();
     canvasContext.moveTo(elmProp.paddingLeft, elmProp.paddingTop);
     canvasContext.lineTo(elmProp.paddingLeft, canvas.height - elmProp.paddingBottom);
     canvasContext.lineTo(canvas.width - elmProp.paddingLeft, canvas.height - elmProp.paddingBottom);
+    canvasContext.globalAlpha = 0.6;
+    canvasContext.lineWidth = 2;
+    canvasContext.strokeStyle = "black";
     canvasContext.stroke();
 
     // 获取到数据的最大值/最小值，以便在X/Y轴上设定值的间距
@@ -111,14 +111,109 @@ var chart = (function () {
   }
 
   var bar = function (options) {
+    var elm = document.querySelector(options.el);
+    var elmProp = {
+      paddingTop:60,
+      paddingRight: 60,
+      paddingBottom:60,
+      paddingLeft:60
+    }
+    var canvas = document.createElement("canvas");
+    var canvasContext = canvas.getContext("2d");
+    canvas.width = 550;
+    canvas.height = 400;
+    elm.appendChild(canvas);
 
+    canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+    // 写标题
+    canvasContext.textAlign = "center";
+    canvasContext.globalAlpha = 0.6;
+    canvasContext.fillText(options.title, canvas.width / 2, elmProp.paddingTop / 2);
+    // 画Y/X轴的两条主线
+    canvasContext.strokeStyle = "black";
+    canvasContext.globalAlpha = 0.6;
+    canvasContext.lineWidth = 2;
+    canvasContext.beginPath();
+    canvasContext.moveTo(elmProp.paddingLeft, elmProp.paddingTop);
+    canvasContext.lineTo(elmProp.paddingLeft, canvas.height - elmProp.paddingBottom);
+    canvasContext.lineTo(canvas.width - elmProp.paddingLeft, canvas.height - elmProp.paddingBottom);
+    canvasContext.stroke();
+
+    // 获取到数据的最大值/最小值，以便在X/Y轴上设定值的间距
+    var dataExtremeValue = getMaxMin(options['data']);
+    var dataMax = dataExtremeValue['max'];
+
+    // 画Y轴
+    var yAxisHeightGapLength = (canvas.height - elmProp.paddingBottom - elmProp.paddingBottom) / 6;
+    var yAxisValueGapLength = dataMax / 6;
+    for (var i=0; i<=6; i++) {
+      canvasContext.beginPath();
+      canvasContext.moveTo(elmProp.paddingTop - 5, elmProp.paddingTop + i * yAxisHeightGapLength);
+      canvasContext.globalAlpha = 1;
+      canvasContext.lineWidth = 0.5;
+      canvasContext.textAlign = "right";
+      var value = parseFloat(yAxisValueGapLength * (6 - i));
+      value = value.toFixed(2);
+      canvasContext.fillText(value + " " + options.yAxis, elmProp.paddingTop - 5, elmProp.paddingTop + 5 + i * yAxisHeightGapLength);
+      canvasContext.lineTo(elmProp.paddingLeft, elmProp.paddingTop + i * yAxisHeightGapLength);
+      canvasContext.stroke();
+
+      canvasContext.globalAlpha = 0.2;
+      canvasContext.lineTo(canvas.width - elmProp.paddingTop, elmProp.paddingTop + i * yAxisHeightGapLength);
+      canvasContext.stroke();
+    }
+
+    /* 画X轴 */
+    var xAxisWidthGapLength = (canvas.width - elmProp.paddingLeft - elmProp.paddingRight) / options.xAxis.length;
+    for (var i=0; i<options.xAxis.length; i++) {
+      canvasContext.beginPath();
+      canvasContext.globalAlpha = 1;
+      canvasContext.lineWidth = 0.5;
+      canvasContext.moveTo(elmProp.paddingLeft + (i+1) * xAxisWidthGapLength, canvas.height - elmProp.paddingBottom + 5);
+      // 标注X轴上的说明
+      canvasContext.textAlign = "center";
+      var value = options.xAxis[i];
+      canvasContext.fillText(value, elmProp.paddingLeft + (i+1) * xAxisWidthGapLength - xAxisWidthGapLength / 2, canvas.height - elmProp.paddingBottom + 20);
+      canvasContext.lineTo(elmProp.paddingLeft + (i+1) * xAxisWidthGapLength, canvas.height - elmProp.paddingBottom);
+      canvasContext.stroke();
+      canvasContext.globalAlpha = 0.2;
+      canvasContext.lineTo(elmProp.paddingLeft + (i+1) * xAxisWidthGapLength, elmProp.paddingTop);
+      canvasContext.stroke();
+    }
+
+    /* 画柱形 */
+    canvasContext.globalAlpha = 0.6;
+    // 计算每个柱形的宽度，多个柱形，就需要平分每个方格的宽度
+    var barWidth = (xAxisWidthGapLength - 16) / options.data.length;
+    // 总方格的长度，与数据对应的比例
+    var ratio = (canvas.height - elmProp.paddingBottom - elmProp.paddingTop) / dataMax;
+    for (var i=0; i< options.data.length; i++) {
+      for (var j=0; j< options.data[i].length; j++) {
+        canvasContext.beginPath();
+        canvasContext.strokeStyle = color[i];
+        canvasContext.lineWidth = 1;
+        canvasContext.moveTo(elmProp.paddingLeft + j * xAxisWidthGapLength + 8 + barWidth * i, canvas.height - elmProp.paddingBottom);
+        canvasContext.lineTo(elmProp.paddingLeft + j * xAxisWidthGapLength + 8 + barWidth * (i+1), canvas.height - elmProp.paddingBottom);
+
+        var currentBarHeight = options.data[i][j] * ratio;
+        canvasContext.lineTo(elmProp.paddingLeft + j * xAxisWidthGapLength + 8 + barWidth * (i+1), canvas.height - elmProp.paddingBottom - currentBarHeight);
+        canvasContext.lineTo(elmProp.paddingLeft + j * xAxisWidthGapLength + 8 +barWidth * i, canvas.height - elmProp.paddingBottom - currentBarHeight);
+        canvasContext.closePath();
+        canvasContext.stroke();
+        canvasContext.fillStyle = color[i];
+        canvasContext.fill();
+      }
+    }
   }
+
   var radar = function (options) {
 
   }
+
   var pie = function (options) {
 
   }
+
   return {
     bar:bar,
     line:line,

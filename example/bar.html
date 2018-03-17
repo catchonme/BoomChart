@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>bar-chart</title>
+</head>
+<body>
+<div id="bar-chart"></div>
+</body>
+<script src="../chart.js"></script>
+<script>
+    var options = {
+      el:"#bar-chart",
+      data:[
+        [43,45,87,252,28,90],
+        [32,67,33,66,255,35]
+      ],
+      xAxis:["100m","200m","300m","400m","500m","600m"],
+      yAxis:'m/s',
+      title:"Bar Example"
+    }
+    chart.bar(options);
+</script>
+</html>
