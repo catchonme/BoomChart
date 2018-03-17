@@ -18,6 +18,14 @@ var chart = (function () {
     };
   }
 
+  // 对数组进行倒序排列
+  function sortData(data) {
+    var newData = data.sort(function (a,b) {
+      return b - a;
+    })
+    return newData;
+  }
+
   var line = function (options) {
     // 先写个复制options的函数
     var elm = document.querySelector(options.el);
@@ -206,18 +214,60 @@ var chart = (function () {
     }
   }
 
-  var radar = function (options) {
+  var pie = function (options) {
+    var elm = document.querySelector(options.el);
+    var elmProp = {
+      paddingTop: 60,
+      paddingRight: 60,
+      paddingBottom: 60,
+      paddingLeft: 60
+    }
+    var canvas = document.createElement("canvas");
+    var canvasContext = canvas.getContext("2d");
+    canvas.width = 350;
+    canvas.height = 350;
+    elm.appendChild(canvas);
 
+    // 重新排列数据，大的数据排在前面
+    var data = sortData(options.data);
+    // 饼图的参数
+    var center = canvas.width > canvas.height ? canvas.height / 2 : canvas.width / 2;
+    var radius = canvas.width > canvas.height ? (canvas.height - elmProp.paddingLeft * 2) / 2 : (canvas.width - elmProp.paddingTop * 2) / 2;
+    var total = data.reduce(function (prev, cur) {
+      return prev + cur;
+    })
+    var degree = data.map(function (value) {
+      var radian = value * 360 / total;
+      return radian * Math.PI / 180;
+    })
+
+    // 写标题
+    canvasContext.textAlign = "center";
+    canvasContext.globalAlpha = 0.6;
+    canvasContext.fillStyle = "black";
+    canvasContext.fillText(options.title, canvas.width / 2, elmProp.paddingTop / 2);
+    // 画饼图
+    var defaultDegree = - Math.PI / 2;
+    for (var i = 0; i< degree.length; i++) {
+      canvasContext.fillStyle = color[i];
+      canvasContext.strokeStyle = color[i];
+      canvasContext.beginPath();
+      canvasContext.moveTo(center, center);
+      canvasContext.arc(center, center, radius, defaultDegree, defaultDegree + degree[i]);
+      defaultDegree = defaultDegree + degree[i];
+      canvasContext.globalAlpha = 0.4;
+      canvasContext.fill();
+    }
   }
 
-  var pie = function (options) {
+  var radar = function (options) {
 
   }
 
   return {
     bar:bar,
     line:line,
-    radar:radar,
-    pie:pie
+    pie:pie,
+    radar:radar
   }
 })()
