@@ -5,7 +5,7 @@
 1. 引入`chart.js`文件
 
 2. 配置参数，曲线图参数配置示例如下
-```apple js
+```javascript
 var options = {
       el:"#line-chart",
       data: [
@@ -19,7 +19,7 @@ var options = {
 ```
 
 3. 调用函数
-```apple js
+```javascript
 chart.line(options);
 ```
 

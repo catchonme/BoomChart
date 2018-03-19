@@ -1,6 +1,13 @@
 var chart = (function () {
-  // 公共参数，颜色
+  // 公共参数 颜色
   var color = ['red', 'green', 'blue', 'black', 'orange', 'brown'];
+  // canvas 需要插入的元素的padding值
+  var elmProp = {
+    paddingTop:60,
+    paddingRight: 60,
+    paddingBottom:60,
+    paddingLeft:60
+  }
 
   // 获取数据的最大值和最小值
   function getMaxMin(data) {
@@ -26,20 +33,25 @@ var chart = (function () {
     return newData;
   }
 
+  // 生成canvas插入到元素中
+  function createCanvas(config) {
+    var elm = document.querySelector(config.el);
+    var canvas = document.createElement("canvas");
+    canvas.width = config.width;
+    canvas.height = config.height;
+    elm.appendChild(canvas);
+    return canvas;
+  }
+
   var line = function (options) {
     // 先写个复制options的函数
-    var elm = document.querySelector(options.el);
-    var elmProp = {
-      paddingTop:60,
-      paddingRight: 60,
-      paddingBottom:60,
-      paddingLeft:60
+    var canvasConfig = {
+      el:options.el,
+      width:800,
+      height:300
     }
-    var canvas = document.createElement("canvas");
+    var canvas = createCanvas(canvasConfig)
     var canvasContext = canvas.getContext("2d");
-    canvas.width = 800;
-    canvas.height = 300;
-    elm.appendChild(canvas);
 
     canvasContext.clearRect(0,0, canvas.width, canvas.height);
     // 写上标题
@@ -119,18 +131,13 @@ var chart = (function () {
   }
 
   var bar = function (options) {
-    var elm = document.querySelector(options.el);
-    var elmProp = {
-      paddingTop:60,
-      paddingRight: 60,
-      paddingBottom:60,
-      paddingLeft:60
+    var canvasConfig = {
+      el:options.el,
+      width:550,
+      height:400
     }
-    var canvas = document.createElement("canvas");
+    var canvas = createCanvas(canvasConfig)
     var canvasContext = canvas.getContext("2d");
-    canvas.width = 550;
-    canvas.height = 400;
-    elm.appendChild(canvas);
 
     canvasContext.clearRect(0, 0, canvas.width, canvas.height);
     // 写标题
@@ -215,18 +222,14 @@ var chart = (function () {
   }
 
   var pie = function (options) {
-    var elm = document.querySelector(options.el);
-    var elmProp = {
-      paddingTop: 60,
-      paddingRight: 60,
-      paddingBottom: 60,
-      paddingLeft: 60
+
+    var canvasConfig = {
+      el:options.el,
+      width:350,
+      height:350
     }
-    var canvas = document.createElement("canvas");
+    var canvas = createCanvas(canvasConfig)
     var canvasContext = canvas.getContext("2d");
-    canvas.width = 350;
-    canvas.height = 350;
-    elm.appendChild(canvas);
 
     // 重新排列数据，大的数据排在前面
     var data = sortData(options.data);
@@ -274,18 +277,13 @@ var chart = (function () {
   }
 
   var radar = function (options) {
-    var elm = document.querySelector(options.el);
-    var elmProp = {
-      paddingTop: 60,
-      paddingRight: 60,
-      paddingBottom: 60,
-      paddingLeft: 60
+    var canvasConfig = {
+      el:options.el,
+      width:350,
+      height:350
     }
-    var canvas = document.createElement("canvas");
+    var canvas = createCanvas(canvasConfig)
     var canvasContext = canvas.getContext("2d");
-    canvas.width = 350;
-    canvas.height = 350;
-    elm.appendChild(canvas);
     canvasContext.clearRect(0, 0, canvas.width, canvas.height);
 
     var center = canvas.width > canvas.height ? canvas.height / 2 : canvas.width / 2;
