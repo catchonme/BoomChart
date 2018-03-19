@@ -1,5 +1,5 @@
 var chart = (function () {
-  // 公共参数
+  // 公共参数，颜色
   var color = ['red', 'green', 'blue', 'black', 'orange', 'brown'];
 
   // 获取数据的最大值和最小值
@@ -274,7 +274,97 @@ var chart = (function () {
   }
 
   var radar = function (options) {
+    var elm = document.querySelector(options.el);
+    var elmProp = {
+      paddingTop: 60,
+      paddingRight: 60,
+      paddingBottom: 60,
+      paddingLeft: 60
+    }
+    var canvas = document.createElement("canvas");
+    var canvasContext = canvas.getContext("2d");
+    canvas.width = 350;
+    canvas.height = 350;
+    elm.appendChild(canvas);
+    canvasContext.clearRect(0, 0, canvas.width, canvas.height);
 
+    var center = canvas.width > canvas.height ? canvas.height / 2 : canvas.width / 2;
+    var radius = canvas.width > canvas.height ? (canvas.height - elmProp.paddingTop * 2) / 2 : (canvas.width - elmProp.paddingLeft * 2) / 2;
+    /* 写标题 */
+    canvasContext.globalAlpha = 0.6;
+    canvasContext.textAlign = "center";
+    canvasContext.fillText(options.title, canvas.width / 2, elmProp.paddingTop / 2);
+
+    /* 画多边形 */
+    canvasContext.translate(center, center);
+    var gapDegree = 360 / options.index.length;
+    var dataMax = Math.max.apply(Math, options.data);
+    var polygonNum = 5; // 五个多边形
+    // 计算每个多边形半径的差值，这样才能知道怎么划分五个多边形
+    var gapRadiusLength = Math.ceil(dataMax / polygonNum);
+    for (var i=1; i<=polygonNum; i++) {
+      var currentRadiusLength = radius * (i * gapRadiusLength) / (polygonNum * gapRadiusLength);
+      for (var j=0; j<options.index.length; j++) {
+        // 画枝干
+        canvasContext.beginPath();
+        canvasContext.globalAlpha = 0.4;
+        canvasContext.rotate(gapDegree * Math.PI / 180);
+        canvasContext.moveTo(0, 0);
+        canvasContext.lineTo(0, -currentRadiusLength);
+        // 每一次都会画一次主干(currentRadiusLength)，这样五次以后，就会越来越粗(从(0,0)到(0,-1)就会画五次，(0,-1)到(0,-2)就会画四次，依次类推)，
+        // 所以现在只在第五次的时候画一次，所以只在第五次的时候画一次，其它时候为透明
+        if (i != 5) {
+          canvasContext.strokeStyle = "rgba(0,0,0,0)";
+        } else {
+          canvasContext.strokeStyle = "black";
+        }
+        canvasContext.stroke();
+        // 画横轴
+        canvasContext.beginPath();
+        canvasContext.moveTo(0, -currentRadiusLength);
+        var x = currentRadiusLength * Math.sin(gapDegree * Math.PI / 180);
+        var y = currentRadiusLength * Math.cos(gapDegree * Math.PI / 180);
+        canvasContext.strokeStyle = "black";
+        canvasContext.lineTo(x, -y);
+        canvasContext.stroke();
+      }
+    }
+
+    // 我理解为这条语句是回到中心点，为什么我看见每个需要旋转的都需要translate两次呢，一次是正，一次是负
+    canvasContext.translate(-center, -center);
+
+    // 把 index 都加上去，8 是在半径上增加 8，这样就能把index写到外面去
+    for (var i=0; i<options.index.length; i++) {
+      var radian = i * gapDegree;
+      var x = center + Math.sin(radian * Math.PI / 180) * (radius + 8);
+      var y = center - Math.cos(radian * Math.PI / 180) * (radius + 8);
+      if (radian == 0 || (radian > 80 && radian < 96)) {
+        canvasContext.textAlign = "center";
+      } else if (radian < 180) {
+        canvasContext.textAlign = "left";
+      } else {
+        canvasContext.textAlign = "right";
+      }
+      canvasContext.fillStyle = "black";
+      canvasContext.fillText(options.index[i], x, y);
+    }
+
+    // 附上颜色
+    canvasContext.beginPath();
+    for (var i=0; i<options.data.length; i++) {
+      var value = options.data[i] * radius / (gapRadiusLength * polygonNum);
+      var radian = i * gapDegree;
+      var x = center + Math.sin(radian * Math.PI / 180) * value;
+      var y = center - Math.cos(radian * Math.PI / 180) * value;
+      if (i == 0) {
+        canvasContext.moveTo(x, y);
+      } else {
+        canvasContext.lineTo(x, y);
+      }
+    }
+    canvasContext.closePath();
+    canvasContext.fillStyle = color[0];
+    canvasContext.fill();
   }
 
   return {

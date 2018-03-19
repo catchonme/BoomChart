@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>radar-chart</title>
+</head>
+<body>
+<div id="radar-chart"></div>
+</body>
+<script src="../chart.js"></script>
+<script>
+    var options = {
+      el:"#radar-chart",
+      index:['Javascript','CSS','HTML','Python','C++','PHP','Java'],
+      data: [100,30,20,45,19,34,78],
+      title:"Radar Example"
+    }
+    chart.radar(options);
+</script>
+</html>
