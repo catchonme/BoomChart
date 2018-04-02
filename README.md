@@ -23,3 +23,49 @@ var options = {
 chart.line(options);
 ```
 
+### 其他图标类型配置
+- 条形图
+```javascript
+var options = {
+      el:"#bar-chart",
+      data:[
+        [43,45,87,252,28,90],
+        [32,67,33,66,255,35]
+      ],
+      xAxis:["100m","200m","300m","400m","500m","600m"],
+      yAxis:'m/s',
+      title:"Bar Example"
+    }
+chart.bar(options);
+```
+- 扇形图
+```javascript
+var options = {
+      el:"#pie-chart",
+      data:[35,67,75,23],
+      title:"Pie Example"
+    }
+chart.pie(options);
+```
+- 雷达图
+```javascript
+var options = {
+      el:"#radar-chart",
+      index:['Javascript','CSS','HTML','Python','C++','PHP','Java'],
+      data: [100,30,20,45,19,34,78],
+      title:"Radar Example"
+    }
+chart.radar(options);
+``` 
+- 空心雷达图
+```javascript
+ var options = {
+      el:"#ring-chart",
+      data:[53,61,89,32],
+      title:"Ring Example"
+    }
+chart.ring(options);
+```
+    
+
+   
