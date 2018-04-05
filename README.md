@@ -23,7 +23,7 @@ var options = {
 chart.line(options);
 ```
 
-### 其他图标类型配置
+### 其他图表类型配置
 - 条形图
 ```javascript
 var options = {
