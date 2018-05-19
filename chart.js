@@ -1,7 +1,7 @@
 var chart = (function () {
   // 公共参数 颜色
   var color = ['red', 'green', 'blue', 'black', 'orange', 'brown'];
-  // canvas 需要插入的元素的padding值
+  // canvas 布局图表时需要的 padding 值
   var elmProp = {
     paddingTop:60,
     paddingRight: 60,
@@ -44,7 +44,7 @@ var chart = (function () {
   }
 
   var line = function (options) {
-    // 先写个复制options的函数
+    // 这里需要先写个复制 options 的函数
     var canvasConfig = {
       el:options.el,
       width:800,
@@ -310,7 +310,7 @@ var chart = (function () {
         canvasContext.moveTo(0, 0);
         canvasContext.lineTo(0, -currentRadiusLength);
         // 每一次都会画一次主干(currentRadiusLength)，这样五次以后，就会越来越粗(从(0,0)到(0,-1)就会画五次，(0,-1)到(0,-2)就会画四次，依次类推)，
-        // 所以现在只在第五次的时候画一次，所以只在第五次的时候画一次，其它时候为透明
+        // 所以现在只在第五次的时候画一次，其它时候为透明
         if (i != 5) {
           canvasContext.strokeStyle = "rgba(0,0,0,0)";
         } else {
