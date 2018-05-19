@@ -159,7 +159,7 @@ var chart = (function () {
     var dataMax = dataExtremeValue['max'];
 
     // 画Y轴
-    var yAxisHeightGapLength = (canvas.height - elmProp.paddingBottom - elmProp.paddingBottom) / 6;
+    var yAxisHeightGapLength = (canvas.height - elmProp.paddingTop - elmProp.paddingBottom) / 6;
     var yAxisValueGapLength = dataMax / 6;
     for (var i=0; i<=6; i++) {
       canvasContext.beginPath();
