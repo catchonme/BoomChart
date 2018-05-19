@@ -260,14 +260,14 @@ var chart = (function () {
       canvasContext.strokeStyle = color[i];
       canvasContext.globalAlpha = 0.4;
       canvasContext.fill();
-      // 画空心圆饼图，多了一步在中心画一个白色的圆
-      if (options.type == "ring") {
+    }
+    // 画空心圆饼图，多了一步在中心画一个白色的圆
+    if (options.type == "ring") {
         canvasContext.beginPath();
         canvasContext.arc(center, center, radius / 2, 0, Math.PI * 2);
         canvasContext.globalAlpha = 1;
         canvasContext.fillStyle = "white";
         canvasContext.fill();
-      }
     }
   }
 
